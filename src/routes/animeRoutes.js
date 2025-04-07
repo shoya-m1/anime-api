@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAnimeDetails } = require('../scrapers/animeDetail');
 
-router.get('/:animeId', async (req, res) => {
+router.get('anime/:animeId', async (req, res) => {
   const { animeId } = req.params;
   try {
     const animeData = await getAnimeDetails(animeId);
