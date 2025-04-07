@@ -30,12 +30,11 @@ const getAnimeDetails = async (animeId) => {
 
   // Ekstraksi sinopsis
   const synopsisParagraphs = [];
-  $(".sinopsis p").each((i, elem) => {
+  $(".sinopc p").each((i, elem) => {
     synopsisParagraphs.push($(elem).text().trim());
   });
   const synopsis = {
     paragraphs: synopsisParagraphs,
-    connections: [],
   };
 
   // Ekstraksi genre
