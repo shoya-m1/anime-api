@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { scrapeEpisodePage } = require("../scrapers/episodeDetail");
 
-router.get("episode/:episodeId", async (req, res) => {
+router.get("/:episodeId", async (req, res) => {
   try {
     const result = await scrapeEpisodePage(req.params.episodeId);
     res.json({

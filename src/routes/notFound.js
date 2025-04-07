@@ -1,12 +1,15 @@
-const router = require("express").Router();
-const route = router;
+// routes/notFound.js
+const express = require("express");
+const router = express.Router();
 
-route.get("*", (req, res) => {
+router.use((req, res) => {
   res.status(404).json({
     method: req.method,
-    message: "cant find spesific endpoint, please make sure you read a documentation",
+    message: "Endpoint not found. Please check the documentation.",
     status: false,
-    code: 401,
+    code: 404,
+    path: req.originalUrl,
   });
 });
+
 module.exports = router;

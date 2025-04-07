@@ -16,10 +16,10 @@ app.use(
 );
 
 app.use(express.json());
-app.use("*", notFound);
 app.use("/", defaultRoute);
 app.use("/anime", animeRoutes);
 app.use("/episode", episodeRoutes);
 app.use("/server", serverRoute);
+app.use(notFound);
 
 module.exports = app;
