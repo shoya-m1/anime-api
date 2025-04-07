@@ -19,7 +19,4 @@ app.use("/episode", episodeRoutes);
 app.use("/server", serverRoutes);
 app.use(notFound);
 
-module.exports = {
-  app,
-  handler: serverless(app),
-};
+module.exports = serverless(app);
