@@ -11,14 +11,10 @@ function decodeObfuscatedId(serverId) {
   const quality = parts[2];
   const realId = parseInt(parts[0], 16);
 
-  const payload = {
-    id: realId,
-    i: id,
-    q: quality,
-  };
-
+  const payload = { id: realId, i: id, q: quality };
   return Buffer.from(JSON.stringify(payload)).toString("base64");
 }
+
 router.get("/:serverId", async (req, res) => {
   try {
     const { serverId } = req.params;
@@ -27,17 +23,13 @@ router.get("/:serverId", async (req, res) => {
     if (!base64Id) {
       return res.status(400).json({
         statusCode: 400,
-        statusMessage: "Bad Request",
         message: "Invalid serverId",
         ok: false,
         data: null,
-        pagination: null,
       });
     }
 
-    // Decode base64 ke JSON
     const decodedData = JSON.parse(Buffer.from(base64Id, "base64").toString("utf-8"));
-
     decodedData.nonce = "e8a21cbc8c";
 
     const form = new URLSearchParams();
@@ -48,6 +40,7 @@ router.get("/:serverId", async (req, res) => {
     form.append("nonce", decodedData.nonce);
 
     const response = await axios.post("https://otakudesu.cloud/wp-admin/admin-ajax.php", form, {
+      timeout: 8000,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "Mozilla/5.0",
@@ -58,15 +51,12 @@ router.get("/:serverId", async (req, res) => {
     });
 
     const base64Data = response.data?.data;
-
     if (!base64Data) {
-      return res.status(500).json({
-        statusCode: 500,
-        statusMessage: "Error",
-        message: "Base64 player iframe not found",
+      return res.status(502).json({
+        statusCode: 502,
+        message: "No iframe data returned",
         ok: false,
         data: null,
-        pagination: null,
       });
     }
 
@@ -77,7 +67,6 @@ router.get("/:serverId", async (req, res) => {
     if (!iframeSrc || iframeSrc.trim() === "") {
       return res.status(200).json({
         statusCode: 200,
-        statusMessage: "OK",
         message: "Video not available on this server",
         ok: true,
         data: {
@@ -85,27 +74,22 @@ router.get("/:serverId", async (req, res) => {
           fallback: true,
           note: "Try another server or quality",
         },
-        pagination: null,
       });
     }
 
     res.json({
       statusCode: 200,
-      statusMessage: "OK",
-      message: "",
+      message: "Success",
       ok: true,
       data: { url: iframeSrc },
-      pagination: null,
     });
   } catch (err) {
-    console.error(err.message);
+    console.error("❌ Error /server/:serverId:", err.message);
     res.status(500).json({
       statusCode: 500,
-      statusMessage: "Internal Server Error",
-      message: err.message,
+      message: "Internal Server Error: " + err.message,
       ok: false,
       data: null,
-      pagination: null,
     });
   }
 });
