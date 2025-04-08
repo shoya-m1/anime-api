@@ -14,9 +14,9 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/", defaultRoute);
-app.use("/anime", animeRoutes);
+// app.use("/anime", animeRoutes);
 // app.use("/episode", episodeRoutes);
-app.use("/server", serverRoutes);
+// app.use("/server", serverRoutes);
 app.use(notFound);
 
 module.exports = app;
