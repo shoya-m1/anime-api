@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 
-const animeRoutes = require("./src/routes/animeRoutes");
+// const animeRoutes = require("./src/routes/animeRoutes");
 // const episodeRoutes = require("./src/routes/episodeRoutes");
-const serverRoutes = require("./src/routes/server");
+// const serverRoutes = require("./src/routes/server");
 const defaultRoute = require("./src/routes/defaultRoute");
 const notFound = require("./src/routes/notFound");
 
