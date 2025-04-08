@@ -2,9 +2,9 @@
 const express = require("express");
 const cors = require("cors");
 
-const animeRoutes = require("./routes/animeRoutes");
+// const animeRoutes = require("./routes/animeRoutes");
 // const episodeRoutes = require("./routes/episodeRoutes");
-const serverRoutes = require("./routes/server");
+// const serverRoutes = require("./routes/server");
 const defaultRoute = require("./routes/defaultRoute");
 const notFound = require("./routes/notFound");
 
