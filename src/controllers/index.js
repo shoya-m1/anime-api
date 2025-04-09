@@ -1,24 +1,59 @@
-const express = require("express");
-const router = express.Router();
-const axios = require("axios");
-const cheerio = require("cheerio");
+import * as parser from "../parser/index.js";
+import { BaseUrl, errorHandler} from "../helpers/index.js";
+import axios from "axios";
+import * as cheerio from "cheerio";
 
-function decodeObfuscatedId(serverId) {
-  const parts = serverId.split("-");
-  if (parts.length !== 3) return null;
+export const defaultPage = (req, res) => {
+  return res.json({
+    source: BaseUrl,
+    author: "wajik45",
+    message: "Ngopiiii.. ☕",
+    alert: "kemungkinan masih ada bug",
+    routes: {
+      home: "/home",
+      anime: "/anime",
+      movie: "/movie",
+      ongoing: "/ongoing",
+      completed: "/completed",
+      genreList: "/genre",
+      genre: "/genre/:slug",
+      search: "/search?query",
+      animeDetails: "/anime/:slug",
+      streamingAnime: "/anime/:slug/:episode",
+      streamingMovie: "/movie/:slug",
+      more: "https://github.com/wajik45/wajik-anime-api",
+    },
+  });
+};
 
-  const id = parseInt(parts[1], 10);
-  const quality = parts[2];
-  const realId = parseInt(parts[0], 16);
+export const getAnimeDetail = async (req, res) => {
+  const { animeId } = req.params;
 
-  const payload = { id: realId, i: id, q: quality };
-  return Buffer.from(JSON.stringify(payload)).toString("base64");
-}
+  try {
+    const data = await parser.animeDetail(animeId);
+    res.status(200).json(data);
+  } catch (error) {
+    const err = errorHandler(error);
+    res.status(500).json(err);
+  }
+};
 
-router.get("/:serverId", async (req, res) => {
+export const getEpisodeDetail = async (req, res) => {
+  const { episodeId } = req.params;
+
+  try {
+    const data = await parser.episodeDetail(episodeId);
+    res.status(200).json(data);
+  } catch (error) {
+    const err = errorHandler(error);
+    res.status(500).json(err);
+  }
+};
+
+export const getServers = async (req, res) => {
   try {
     const { serverId } = req.params;
-    const base64Id = decodeObfuscatedId(serverId);
+    const base64Id = parser.servers(serverId);
 
     if (!base64Id) {
       return res.status(400).json({
@@ -30,7 +65,16 @@ router.get("/:serverId", async (req, res) => {
     }
 
     const decodedData = JSON.parse(Buffer.from(base64Id, "base64").toString("utf-8"));
-    decodedData.nonce = "e8a21cbc8c";
+    const nonce = await parser.getNonce();
+    if (!nonce) {
+      return res.status(500).json({
+        statusCode: 500,
+        message: "Failed to fetch nonce",
+        ok: false,
+        data: null,
+      });
+    }
+    decodedData.nonce = nonce;
 
     const form = new URLSearchParams();
     form.append("action", "2a3505c93b0035d3f455df82bf976b84");
@@ -92,6 +136,4 @@ router.get("/:serverId", async (req, res) => {
       data: null,
     });
   }
-});
-
-module.exports = router;
+};
